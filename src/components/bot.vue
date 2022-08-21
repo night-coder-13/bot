@@ -1,48 +1,47 @@
 <template>
-  <!-- <div>
-    <canvas ref="canvas" id="canvas" width="400" height="400"></canvas>
-  </div> -->
-  <div class="inline">
-    <div id="box">
-      <p>hover box</p>
-      <p>leave box</p>
-      <p>mouse down for 1s in box</p>
-      <p>mouse up box</p>
+  <div class="inline ">
+    <div class="bg-dark">
+
     </div>
-  <canvas id="canvas" width="800" height="500"></canvas>
-</div>
-<div class="inline">
-  <button id="idle" class="mx-4 bg-red-500 text-white p-2 rounded-md">click me</button>
-  <button id="wipers" class="mx-4 bg-green-500 text-white p-2 rounded-md">click me 2</button>
-  <div id="loop">Looped Animation: TBD</div>
+    <div id="box">
+       <div class="w-full relative order-1 lg:order-none">
+            <form id="form" class="form p-2 lg:absolut mb-8 m-auto rounded-xl shadow-lg" action="">
+                <p class="text-center text-2xl font-bold pt-10 pb-2">Login</p>
+                <div class="grid my-4 mx-2">
+                    <label for="">Name</label>
+                    <input type="text" placeholder="Name" required id="Iemail" class=" w-11/12 rounded-lg px-3 py-2 mx-3 my-2 bg-gray-50 border border-gray-400">
+                </div>
+                <div class="grid my-4 mx-2">
+                    <label for="">Password</label>
+                    <input type="password" placeholder="Password" required id="Ipassword" class="w-11/12 rounded-lg px-3 py-2 mx-3 my-2 bg-gray-50 border border-gray-400">
+                </div>
+                <div>
+                  <a href="" class="forgot-pass ml-2 text-red-700">I forgot my password</a>
+                </div>
+                <button id="btn" class="my-4 ml-10 flex items-center px-5 py-1 text-lg rounded-lg bg-blue-400 text-white">login </button>
+            </form>
+        </div>
+    </div>
+  <canvas id="canvas" :width="width < 450 ? width+320 : width" :height="height" class="-ml-32 sm:ml-0"></canvas>
 </div>
 </template>
 
 <script setup>
 // import { Rive } from '@rive-app/webgl';
-import { onMounted } from '@vue/runtime-core';
+import { onMounted, ref } from '@vue/runtime-core';
 import { Rive , Layout } from '@rive-app/webgl';
-// import rive from "@rive-app/canvas";
-// new rive.Rive({
-//         src: "https://cdn.rive.app/animations/vehicles.riv",
-//         // Or the path to a local Rive asset
-//         // src: './example.riv',
-//         canvas: document.getElementById("canvas"),
-//         autoplay: true
-//     });
-// const canvas = ref();
+
+  const width = ref(window.innerWidth
+|| document.documentElement.clientWidth
+|| document.body.clientWidt)
+  const height = ref(window.innerHeight
+|| document.documentElement.clientHeight
+|| document.body.clientHeight)
   onMounted(()=> {
-const idleButton = document.getElementById("idle");
-const wipersButton = document.getElementById("wipers");
-const box = document.getElementById("box");
-// const loopDiv = document.getElementById("loop");
-    // new Rive({
-    //     canvas: canvas.value,
-    //     src: 'http://localhost/mohito_/src/assets/new_file.riv',
-    //     // src: 'https://cdn.rive.app/animations/vehicles.riv',
-    //     autoplay: true,
-    //     animations: 'idle',
-    // })
+// const box = document.getElementById("box");
+// const forgotPass = document.getElementsByClassName("forgot-pass");
+const Iemail = document.getElementById("Iemail");
+const Ipassword = document.getElementById("Ipassword");
     const truck = new Rive({
         src: "http://localhost/mohito_/src/assets/2721-5591-newsletter-bot.riv",
         // artboard: "jeep",
@@ -53,65 +52,58 @@ const box = document.getElementById("box");
         onLoad: () => {
             // Get the inputs via the name of the state machine
             const inputs = truck.stateMachineInputs('State Machine 1');
-            // Find the input you want to set a value for, or trigger
-            const bumpTrigger = inputs.find(i => i.name === 'isPressed');
-            const isLimited = inputs.find(i => i.name === 'isLimited');
             const States = inputs.find(i => i.name === 'States');
-            idleButton.onclick = () => bumpTrigger.value === true ? bumpTrigger.value = false : bumpTrigger.value = true;
-            wipersButton.onclick = () => isLimited.value === true ? isLimited.value = false : isLimited.value = true;
-            box.onmouseenter= () => {States.value=1};
-            box.onmouseleave= () => States.value=0;
-            box.onmousedown= () => {States.value=2;bumpTrigger.value = false};
-            box.onmouseup= () => States.value=3;
+            Iemail.onfocus = ()=>States.value=1;
+            Iemail.addEventListener('focusout', ()=>{States.value=0} )
+            Ipassword.onfocus = ()=>States.value=1;
+            Ipassword.addEventListener('focusout', ()=>{States.value=0} )
+            document.getElementById('btn').addEventListener('click',(event)=>{
+              event.preventDefault()
+              if(Ipassword.value !== '159753'){
+                States.value = 3
+              }else{
+                States.value = 2
+                document.getElementById('form').style.marginTop ='220px'
+                document.getElementById('form').innerHTML = '<p class="text-green-600 text-2xl text-center">Success</p>'
+              }
+            })
         },
-        // Listen for play events to update button text
-        // onPlay: (event) => {
-        //     const names = event.data;
-        //     names.forEach((name) => {
-        //     if (name === "idle") {
-        //         idleButton.innerHTML = "Stop Truck";
-        //     } else if (name === "windshield_wipers") {
-        //         wipersButton.innerHTML = "Stop Wipers";
-        //     }
-        //     });
-        // },
-        // // Listen for pause events to update button text
-        // onPause: (event) => {
-        //     const names = event.data;
-        //     names.forEach((name) => {
-        //     if (name === "idle") {
-        //         idleButton.innerHTML = "Start Truck";
-        //     } else if (name === "windshield_wipers") {
-        //         wipersButton.innerHTML = "Start Wipers";
-        //     }
-        //     });
-        // },
-        // onLoop: (event) => {
-        //     loopDiv.innerHTML = `Looped Animation: ${event.data.animation}`;
-        // }
         });
-        idleButton.onclick = () =>
-        {truck.playingAnimationNames.includes("idle")
-            ? truck.pause("idle")
-            : truck.play("idle");}
-
-        wipersButton.onclick = () =>
-        truck.playingAnimationNames.includes("windshield_wipers")
-            ? truck.pause("windshield_wipers")
-            : truck.play("windshield_wipers");
     })
 
 </script>
 <style>
 #box{
     position: fixed;
-    top: 30px;
-    left: 50px;
-    width: 200px;
-    height: 200px;
+    top: 80px;
+    left: 150px;
+    width: 330px;
+    height: 250px;
     border-radius: 15px;
-    border: 2px solid #333;
-    cursor: pointer;
     padding: 5px;
+    z-index: 9999;
+}
+.bg-dark{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg,rgba(0, 0, 0, 0.109) , rgba(0, 0, 0, 0.200));
+}
+.form{
+  backdrop-filter: blur(2px);
+  color: #fff;
+  border: 1px solid rgb(195, 195, 195);
+}
+.form input{
+  color: rgb(97, 97, 97);
+}
+@media only screen and (max-width: 450px){
+  #box{
+    position: absolute;
+    top: 30px;
+    left: 15px;
+    width: 90%;
+    z-index: 9999;
+}
 }
 </style>
